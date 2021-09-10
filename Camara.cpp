@@ -35,14 +35,18 @@ void Camara::Renderizar() {
 
     for(int x=0;  x < w; x++) {
         for(int y=0; y < h; y++) {
-            dir = ze*(-f) + ye*a*(y/h-1/2) + xe*b*(x/w -1/2);
+            dir = ze*(-f) + ye*a*(y/h-1/2.) + xe*b*(x/w -1/2.);
             dir.normalize();
             ray.dir = dir;
-
+            //cout << "\ndir: " << dir;
+            t_min=100000;
             color_min.set(0,0,0);
             for (auto &obj : objetos) {
                 bool intersecto = obj->intersectar(ray, t, color);
+
                 if (intersecto && t < t_min) {
+                    //cout << "\ndir: " << dir;
+                    //cout << " t: " << t << color;
                     t_min = t;
                     color_min = color;
                 }
