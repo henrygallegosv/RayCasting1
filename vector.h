@@ -40,6 +40,12 @@ public:
         return vec3f(f*x, f*y, f*z);
     }
 
+    void operator*=(vec3f v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+    }
+
     void normalize() {
         double m = modulo();
         x = x/m;
