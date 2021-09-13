@@ -30,8 +30,12 @@ void Camara::Renderizar() {
     int t, t_min=100000;
     vec3f color, color_min;
     vector<Objeto*> objetos;
-    Objeto *pEsfera = new Esfera(vec3f(2,2,0),4, vec3f(255,0,128));
+    Objeto *pEsfera = new Esfera(vec3f(3,3,0),2, vec3f(255,0,128));
+    Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),1, vec3f(0,0,255));
+    Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),1, vec3f(0,128,128));
     objetos.push_back(pEsfera);
+    objetos.push_back(pEsfera2);
+    objetos.push_back(pEsfera3);
 
     for(int x=0;  x < w; x++) {
         for(int y=0; y < h; y++) {
@@ -45,16 +49,17 @@ void Camara::Renderizar() {
                 bool intersecto = obj->intersectar(ray, t, color);
 
                 if (intersecto && t < t_min) {
-                    //cout << "\ndir: " << dir;
-                    //cout << " t: " << t << color;
+                    cout << "\nx: " << x << " y: " << y;
+                    cout << " dir: " << dir;
+                    cout << " t: " << t << color;
                     t_min = t;
                     color_min = color;
                 }
             }
 
-            (*pImg)(x,y,0) = (BYTE)(color_min.x);
-            (*pImg)(x,y,1) = (BYTE)(color_min.y);
-            (*pImg)(x,y,2) = (BYTE)(color_min.z);
+            (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x);
+            (*pImg)(x,h-1-y,1) = (BYTE)(color_min.y);
+            (*pImg)(x,h-1-y,2) = (BYTE)(color_min.z);
             dis_img.render((*pImg));
             dis_img.paint();
 

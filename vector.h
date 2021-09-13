@@ -23,6 +23,7 @@ public:
 
     vec3f productoCruz(vec3f v) {
         return vec3f(y*v.z - v.y*z, v.x*z - x*v.z, x*v.y - v.x*y);
+        //return vec3f(y*v.z - v.y*z, x*v.z - v.x*z, x*v.y - v.x*y);
     }
     float productoPunto(vec3f v) {
         return x*v.x + y*v.y + z*v.z;

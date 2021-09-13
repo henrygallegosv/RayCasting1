@@ -25,7 +25,7 @@ public:
         this->pos = pos;
         ze = pos - center;
         ze.normalize();
-        xe = ze.productoCruz(up);
+        xe = up.productoCruz(ze);
         xe.normalize();
         ye = ze.productoCruz(xe);
         cout << "\npos: " << pos;
