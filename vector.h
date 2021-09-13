@@ -36,9 +36,8 @@ public:
         return vec3f(x - v.x, y -v.y, z-v.z);
     }
 
-    vec3f operator*(float f){
-        return vec3f(f*x, f*y, f*z);
-    }
+    vec3f operator*(float f) { return vec3f(f*x, f*y, f*z); }
+    vec3f operator/(float f) { return vec3f(x/f, y/f, z/f); }
 
     void operator*=(vec3f v) {
         x *= v.x;
@@ -54,6 +53,15 @@ public:
     }
     double modulo() {
         return sqrt(x*x + y*y + z*z);
+    }
+
+    void max_to_one() {
+        float max_value = std::max(x, std::max(y,z));
+        if (max_value > 1.0){
+            x = x / max_value;
+            y = y / max_value;
+            z = z / max_value;
+        }
     }
 
 };

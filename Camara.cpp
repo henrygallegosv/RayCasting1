@@ -28,13 +28,13 @@ void Camara::Renderizar() {
     pImg = new CImg<BYTE>(w, h, 1, 10);
     CImgDisplay dis_img((*pImg), "Imagen RayTracing en Perspectiva desde una Camara Pinhole");
 
-    int t, t_min=100000;
+    float t, t_min=100000;
     vec3f color, color_min, normal, normal_min;
     float kd_min;
     vector<Objeto*> objetos;
-    Objeto *pEsfera = new Esfera(vec3f(3,3,0),2, vec3f(255/255.,0,128/255.));
-    Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),1, vec3f(0,0,255/255.));
-    Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),1, vec3f(0,128/255.,128/255.));
+    Objeto *pEsfera = new Esfera(vec3f(3,3,0),4, vec3f(255/255.,0,128/255.));
+    Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),2, vec3f(0,0,255/255.));
+    Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),2, vec3f(0,128/255.,128/255.));
     pEsfera->kd = 0.3;
     pEsfera2->kd = 0.3;
     pEsfera3->kd = 0.3;
@@ -44,7 +44,7 @@ void Camara::Renderizar() {
 
     Luz luz(vec3f(-10, 10, 0), vec3f(1,1,1));
 
-    bool intersecto;
+    bool intersecto, intersecto_uno;
     for(int x=0;  x < w; x++) {
         for(int y=0; y < h; y++) {
             dir = ze*(-f) + ye*a*(y/h-1/2.) + xe*b*(x/w -1/2.);
@@ -53,31 +53,37 @@ void Camara::Renderizar() {
             //cout << "\ndir: " << dir;
             t_min=100000;
             color_min.set(0,0,0);
+            kd_min = 0;
+            intersecto_uno = false;
             for (auto &obj : objetos) {
                 intersecto = obj->intersectar(ray, t, color, normal);
 
                 if (intersecto && t < t_min) {
+                    intersecto_uno = true;
                     //cout << "\nx: " << x << " y: " << y;
                     //cout << " dir: " << dir;
                     //cout << " t: " << t << color;
+
                     t_min = t;
                     color_min = color;
                     normal_min = normal;
                     kd_min = obj->kd;
                 }
             }
-            if (intersecto) {
-                vec3f luz_ambiente = luz.color * 0.2;
+            if (intersecto_uno) {
+                vec3f luz_ambiente = luz.color * 0.1;
                 //color_min.normalize();
 
                 // normal vec_luz
                 vec3f pi = ray.punto_interseccion(t_min);
                 vec3f L = luz.pos - pi;
                 float factor_difuso = normal_min.productoPunto(L);
-                vec3f luz_difusa = luz.color * kd_min * factor_difuso;
-
+                vec3f luz_difusa(0,0,0);
+                //if (factor_difuso > 0) {
+                   luz_difusa = luz.color * kd_min * factor_difuso;
+                //}
                 color_min *= (luz_ambiente + luz_difusa);
-                color_min.normalize();
+                color_min.max_to_one();
             }
 
             (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x * 255);
