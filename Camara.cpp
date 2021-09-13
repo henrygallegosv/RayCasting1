@@ -35,14 +35,14 @@ void Camara::Renderizar() {
     Objeto *pEsfera = new Esfera(vec3f(3,3,0),2, vec3f(255/255.,0,128/255.));
     Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),1, vec3f(0,0,255/255.));
     Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),1, vec3f(0,128/255.,128/255.));
-    pEsfera->kd = 0.7;
-    pEsfera2->kd = 0.9;
+    pEsfera->kd = 0.3;
+    pEsfera2->kd = 0.3;
     pEsfera3->kd = 0.3;
     objetos.push_back(pEsfera);
     objetos.push_back(pEsfera2);
     objetos.push_back(pEsfera3);
 
-    Luz luz(vec3f(0, 10, 5), vec3f(1,1,1));
+    Luz luz(vec3f(-10, 10, 0), vec3f(1,1,1));
 
     bool intersecto;
     for(int x=0;  x < w; x++) {
@@ -67,26 +67,29 @@ void Camara::Renderizar() {
                 }
             }
             if (intersecto) {
-                color_min *= luz.color;
-                color_min.normalize();
+                vec3f luz_ambiente = luz.color * 0.2;
+                //color_min.normalize();
 
                 // normal vec_luz
                 vec3f pi = ray.punto_interseccion(t_min);
                 vec3f L = luz.pos - pi;
-                float pp = L.productoPunto(normal);
-                vec3f color_difusa = luz.color * kd_min * pp;
-                color_min *= color_difusa;
+                float factor_difuso = normal_min.productoPunto(L);
+                vec3f luz_difusa = luz.color * kd_min * factor_difuso;
+
+                color_min *= (luz_ambiente + luz_difusa);
                 color_min.normalize();
             }
 
             (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x * 255);
             (*pImg)(x,h-1-y,1) = (BYTE)(color_min.y * 255);
             (*pImg)(x,h-1-y,2) = (BYTE)(color_min.z * 255);
-            dis_img.render((*pImg));
-            dis_img.paint();
+            //dis_img.render((*pImg));
+            //dis_img.paint();
 
         }
     }
+    dis_img.render((*pImg));
+    dis_img.paint();
     while (!dis_img.is_closed()) {
         dis_img.wait();
     }
