@@ -30,17 +30,23 @@ void Camara::Renderizar() {
 
     float t, t_min=100000;
     vec3f color, color_min, normal, normal_min;
-    float kd_min;
+    float kd_min, ks_min, n_min;
     vector<Objeto*> objetos;
     Objeto *pEsfera = new Esfera(vec3f(3,3,0),4, vec3f(1,0,0.5));
     Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),2, vec3f(0,0,1));
-    Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),2, vec3f(0,0.5,0.5));
-    pEsfera->kd = 0.3;
-    pEsfera2->kd = 0.3;
+    Objeto *pEsfera3 = new Esfera(vec3f(8,0,0),3, vec3f(0,0.5,0.5));
+    pEsfera->kd = 0.9;
+    pEsfera2->kd = 0.7;
     pEsfera3->kd = 0.3;
+    pEsfera->ks = 0.5;
+    pEsfera->n = 2;
+    pEsfera2->ks = 0.4;
+    pEsfera2->n = 3;
+    pEsfera3->ks = 0.3;
+    pEsfera3->n = 3;
     objetos.push_back(pEsfera);
-    //objetos.push_back(pEsfera2);
-    //objetos.push_back(pEsfera3);
+    objetos.push_back(pEsfera2);
+    objetos.push_back(pEsfera3);
 
     Luz luz(vec3f(-10, 10, 0), vec3f(1,1,1));
 
@@ -68,6 +74,8 @@ void Camara::Renderizar() {
                     color_min = color;
                     normal_min = normal;
                     kd_min = obj->kd;
+                    ks_min = obj->ks;
+                    n_min = obj->n;
                 }
             }
             if (intersecto_uno) {
@@ -84,9 +92,21 @@ void Camara::Renderizar() {
                 if (factor_difuso > 0) {
                    luz_difusa = luz.color * kd_min * factor_difuso;
                 }
-                color_min *= (luz_ambiente + luz_difusa);
+
+                // luz especular
+                vec3f V(-dir.x, -dir.y, -dir.z); // vector hacia el observador
+                vec3f r = normal_min*2.*(L.productoPunto(normal_min)) - L;
+                r.normalize();
+
+                float factor_especular = pow(r.productoPunto(V), n_min);
+                vec3f luz_especular(0,0,0);
+                if (factor_especular > 0.0) {
+                    luz_especular = luz.color * ks_min * factor_especular;
+                }
+
+                color_min *= (luz_ambiente + luz_difusa + luz_especular);
                 color_min.max_to_one();
-                cout << "\nx: " << x << " y: " << y <<" color: " << color_min << " fd: "<< factor_difuso << " L: " << L;
+                //cout << "\nx: " << x << " y: " << y <<" color: " << color_min << " fd: "<< factor_difuso << " L: " << L;
             }
 
             (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x * 255);

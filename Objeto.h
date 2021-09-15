@@ -11,7 +11,7 @@
 class Objeto {
 public:
 vec3f color;
-float kd, ks;
+float kd, ks, n;
 Objeto(vec3f col):color{col}{}
 
 //virtual bool intersectar(Rayo ray, int &t, vec3f &c)=0;
