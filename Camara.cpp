@@ -39,7 +39,7 @@ void Camara::Renderizar() {
     pEsfera2->kd = 0.7;
     pEsfera3->kd = 0.3;
     pEsfera->ks = 0.5;
-    pEsfera->n = 2;
+    pEsfera->n = 4;
     pEsfera2->ks = 0.4;
     pEsfera2->n = 3;
     pEsfera3->ks = 0.3;
@@ -98,15 +98,18 @@ void Camara::Renderizar() {
                 vec3f r = normal_min*2.*(L.productoPunto(normal_min)) - L;
                 r.normalize();
 
-                float factor_especular = pow(r.productoPunto(V), n_min);
+                float factor_especular = r.productoPunto(V);
                 vec3f luz_especular(0,0,0);
                 if (factor_especular > 0.0) {
+                    factor_especular = pow(factor_especular, n_min);
                     luz_especular = luz.color * ks_min * factor_especular;
                 }
 
                 color_min *= (luz_ambiente + luz_difusa + luz_especular);
                 color_min.max_to_one();
-                //cout << "\nx: " << x << " y: " << y <<" color: " << color_min << " fd: "<< factor_difuso << " L: " << L;
+                //cout << "\nx: " << x << " y: " << y <<" color: " << color_min <<
+                //" fd: "<< factor_difuso << " L: " << L <<
+                //" fe: " << factor_especular;
             }
 
             (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x * 255);
