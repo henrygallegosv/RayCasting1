@@ -37,6 +37,7 @@ public:
         col = color;
         vec3f pi = ray.punto_interseccion(t);
         normal = pi - centro;
+        normal.normalize();
 
         return true;
 

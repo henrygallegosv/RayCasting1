@@ -32,15 +32,15 @@ void Camara::Renderizar() {
     vec3f color, color_min, normal, normal_min;
     float kd_min;
     vector<Objeto*> objetos;
-    Objeto *pEsfera = new Esfera(vec3f(3,3,0),4, vec3f(255/255.,0,128/255.));
-    Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),2, vec3f(0,0,255/255.));
-    Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),2, vec3f(0,128/255.,128/255.));
+    Objeto *pEsfera = new Esfera(vec3f(3,3,0),4, vec3f(1,0,0.5));
+    Objeto *pEsfera2 = new Esfera(vec3f(0,0,0),2, vec3f(0,0,1));
+    Objeto *pEsfera3 = new Esfera(vec3f(6,0,0),2, vec3f(0,0.5,0.5));
     pEsfera->kd = 0.3;
     pEsfera2->kd = 0.3;
     pEsfera3->kd = 0.3;
     objetos.push_back(pEsfera);
-    objetos.push_back(pEsfera2);
-    objetos.push_back(pEsfera3);
+    //objetos.push_back(pEsfera2);
+    //objetos.push_back(pEsfera3);
 
     Luz luz(vec3f(-10, 10, 0), vec3f(1,1,1));
 
@@ -77,13 +77,16 @@ void Camara::Renderizar() {
                 // normal vec_luz
                 vec3f pi = ray.punto_interseccion(t_min);
                 vec3f L = luz.pos - pi;
+                L.normalize();
+
                 float factor_difuso = normal_min.productoPunto(L);
                 vec3f luz_difusa(0,0,0);
-                //if (factor_difuso > 0) {
+                if (factor_difuso > 0) {
                    luz_difusa = luz.color * kd_min * factor_difuso;
-                //}
+                }
                 color_min *= (luz_ambiente + luz_difusa);
                 color_min.max_to_one();
+                cout << "\nx: " << x << " y: " << y <<" color: " << color_min << " fd: "<< factor_difuso << " L: " << L;
             }
 
             (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x * 255);
