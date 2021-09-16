@@ -8,6 +8,11 @@
 #include <cmath>
 #include <ostream>
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+
 class vec3f {
 public:
     float x, y, z;

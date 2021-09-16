@@ -47,7 +47,10 @@ void Camara::Renderizar() {
     objetos.push_back(pEsfera);
     objetos.push_back(pEsfera2);
     objetos.push_back(pEsfera3);
-    Cilindro *pCilindro1 = new Cilindro(vec3f(-5,0,3), 0., 5., 3., vec3f(1.,0.8,0));
+    //Cilindro *pCilindro1 = new Cilindro(vec3f(-5,0,3), 0., 2., 3., vec3f(1.,0.8,0));
+    Cilindro *pCilindro1 = new Cilindro(vec3f(-5,0,3),
+                                        vec3f(-5, 3, 3), 3,
+                                        vec3f(1.0,0.8,0.0));
     pCilindro1->kd = 0.8;
     pCilindro1->ks = 0.4;
     pCilindro1->n = 3;
