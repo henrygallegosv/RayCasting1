@@ -41,6 +41,7 @@ public:
         return vec3f(x - v.x, y -v.y, z-v.z);
     }
 
+    vec3f operator*(vec3f v) {}
     vec3f operator*(float f) { return vec3f(f*x, f*y, f*z); }
     vec3f operator/(float f) { return vec3f(x/f, y/f, z/f); }
 
@@ -49,6 +50,7 @@ public:
         y *= v.y;
         z *= v.z;
     }
+    vec3f operator-(){}
 
     void normalize() {
         double m = modulo();
@@ -69,9 +71,17 @@ public:
         }
     }
 
+    vec3f yzx() {}
+    vec3f xyz() {}
+    vec3f zxy() {}
+
 };
 std::ostream& operator<<(std::ostream &os, vec3f v);
 
+vec3f operator/(float f, vec3f &v);
 
+vec3f abs(vec3f &v);
+vec3f sign(vec3f &v);
+vec3f step(vec3f v1, vec3f v2);
 
 #endif //RT1_VECTOR_H
