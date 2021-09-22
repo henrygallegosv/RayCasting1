@@ -41,7 +41,7 @@ public:
         return vec3f(x - v.x, y -v.y, z-v.z);
     }
 
-    vec3f operator*(vec3f v) {}
+    vec3f operator*(vec3f v) { return vec3f(x*v.x, y*v.y, z*v.z); }
     vec3f operator*(float f) { return vec3f(f*x, f*y, f*z); }
     vec3f operator/(float f) { return vec3f(x/f, y/f, z/f); }
 
