@@ -146,6 +146,7 @@ public:
         if( h < 0.0 ) return false; //no intersection
         h = sqrt(h);
         t = (-b-h)/a;
+        if (t <= 0) return false;
         // body
         float y = caoc + t*card;
         if( y > 0.0 && y < caca ) {
@@ -155,6 +156,7 @@ public:
         }
         // caps
         t = ( ( (y < 0.0) ? 0.0 : caca) - caoc)/card;
+        if (t <= 0) return false;
         if ( abs(b + a * t) < h ) {
             normal = ca * sgn(y) / caca;
             col = color;

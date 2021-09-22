@@ -96,17 +96,17 @@ void Camara::Renderizar() {
                 L.normalize();
 
                 Rayo rayo_sombra;
-                rayo_sombra.ori = pi + L*0.01;
+                rayo_sombra.ori = pi + L*0.0001;
                 rayo_sombra.dir = L;
 
                 float factor_sombra = 1;
-                /*for (auto &obj : objetos) {
+                for (auto &obj : objetos) {
                     intersecto = obj->intersectar(rayo_sombra, t, color, normal);
                     if (intersecto) {
                         factor_sombra = 0;
                         break;
                     }
-                }*/
+                }
 
                 if (factor_sombra) {
                     float factor_difuso = normal_min.productoPunto(L);
