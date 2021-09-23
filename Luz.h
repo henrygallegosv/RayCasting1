@@ -12,7 +12,14 @@ class Luz {
 public:
 vec3f pos, color;
 
+Luz() {}
+
 Luz(vec3f _pos, vec3f _color) : pos{_pos}, color{_color} {}
+
+void set(vec3f _pos, vec3f _color) {
+    pos = _pos;
+    color = _color;
+}
 };
 
 

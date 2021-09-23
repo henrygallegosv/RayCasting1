@@ -12,7 +12,11 @@ class Objeto {
 public:
 vec3f color;
 float kd, ks, n;
-Objeto(vec3f col):color{col}{}
+bool es_reflexivo, es_refractivo;
+float kr, nu;
+Objeto(vec3f col):color{col}{
+    es_reflexivo = es_refractivo = false;
+}
 
 //virtual bool intersectar(Rayo ray, int &t, vec3f &c)=0;
 virtual bool intersectar(Rayo ray, float &t, vec3f &c, vec3f &normal)=0;
@@ -61,23 +65,24 @@ public:
         vec3f n = ray.ori*m;
         vec3f k = abs(m)*rad;
 
-        vec3f t1 = -n - k;
-        vec3f t2 = -n + k;
+        vec3f t1 = (-n) - k;
+        vec3f t2 = (-n)  + k;
 
         float tN = fmax( fmax( t1.x, t1.y ), t1.z );
         float tF = fmin( fmin( t2.x, t2.y ), t2.z );
 
         if( tN > tF || tF < 0.0) return false;
 
-        vec3f nor = -sign(ray.dir)*step(t1.yzx(),t1.xyz())*step(t1.zxy(),t1.xyz());
+        vec3f nor = (-sign(ray.dir))*step(t1.yzx(),t1.xyz())*step(t1.zxy(),t1.xyz());
 
         // convert to ray space
-
         //nor = (txi * vec4(nor,0.0)).xyz;
 
         t = tN;
         normal = nor;
+        c = color;
         //return vec4( tN, nor );
+        return true;
     }
 };
 

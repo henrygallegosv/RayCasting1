@@ -8,10 +8,15 @@
 #include <iostream>
 #include "vector.h"
 #include "CImg.h"
+#include "Rayo.h"
+#include "Objeto.h"
+#include "Luz.h"
 
 using namespace std;
 using namespace cimg_library;
 typedef unsigned char BYTE;
+
+const int DEPTH_MAX = 5;
 
 class Camara {
     vec3f pos, xe, ye, ze;
@@ -19,8 +24,11 @@ class Camara {
     float a, b, f, fov;
 
     CImg<BYTE> *pImg;
+    vector<Objeto*> objetos;
+    Luz luz;
 
 public:
+    Camara() {}
     void calcularVectores(vec3f pos, vec3f center, vec3f up){
         this->pos = pos;
         ze = pos - center;
@@ -44,6 +52,8 @@ public:
     }
 
     void Renderizar();
+
+    vec3f CalcularRayosSecundarios(Rayo rayo, int depth);
 };
 
 

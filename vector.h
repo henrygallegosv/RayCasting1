@@ -50,7 +50,7 @@ public:
         y *= v.y;
         z *= v.z;
     }
-    vec3f operator-(){}
+    vec3f operator-(){ return vec3f(-x,-y,-z);}
 
     void normalize() {
         double m = modulo();
@@ -71,9 +71,9 @@ public:
         }
     }
 
-    vec3f yzx() {}
-    vec3f xyz() {}
-    vec3f zxy() {}
+    vec3f yzx() { return vec3f(y, z, x); }
+    vec3f xyz() { return vec3f(x, y, z); }
+    vec3f zxy() { return vec3f(z, x, y); }
 
 };
 std::ostream& operator<<(std::ostream &os, vec3f v);
