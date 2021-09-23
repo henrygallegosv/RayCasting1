@@ -42,7 +42,8 @@ void Camara::Renderizar() {
     pEsfera->n = 4;
     pEsfera2->ks = 0.4;
     pEsfera2->n = 3;
-
+    pEsfera2->es_reflexivo = true;
+    pEsfera2->kr = 0.8;
     pEsfera3->ks = 0.3;
     pEsfera3->n = 3;
     objetos.push_back(pEsfera);
@@ -263,7 +264,7 @@ vec3f Camara::CalcularRayosSecundarios(Rayo rayo, int depth){
             rayo_reflexivo.dir = normal_min * 2. * (vec_rayo.productoPunto(normal_min)) - vec_rayo;
             color_reflexivo = CalcularRayosSecundarios(rayo_reflexivo, depth + 1);
 
-            color_min *= color_reflexivo * pObj->kr;
+            color_min = color_min + color_reflexivo * pObj->kr;
             color_min.max_to_one();
         }
 
