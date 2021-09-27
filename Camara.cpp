@@ -40,12 +40,16 @@ void Camara::Renderizar() {
     pEsfera3->kd = 0.3;
     pEsfera->ks = 0.5;
     pEsfera->n = 4;
+    pEsfera->es_reflexivo = true;
+    pEsfera->kr = 0.2;
     pEsfera2->ks = 0.4;
     pEsfera2->n = 3;
     pEsfera2->es_reflexivo = true;
     pEsfera2->kr = 0.8;
     pEsfera3->ks = 0.3;
     pEsfera3->n = 3;
+    pEsfera3->es_reflexivo = true;
+    pEsfera3->kr = 0.5;
     objetos.push_back(pEsfera);
     objetos.push_back(pEsfera2);
     objetos.push_back(pEsfera3);
@@ -65,6 +69,12 @@ void Camara::Renderizar() {
     pCaja->ks = 0.3;
     pCaja->n = 5;
     //objetos.push_back(pCaja);
+
+    Plano *pPlano = new Plano(vec3f(0,-5,0), vec3f(-1,5,0), vec3f(1.0,0.8,0.8));
+    pPlano->kd = 0.9;
+    pPlano->ks = 0.4;
+    pPlano->n = 3;
+    objetos.push_back(pPlano);
 
     luz.set(vec3f(-10, 10, 0), vec3f(1,1,1));
 
