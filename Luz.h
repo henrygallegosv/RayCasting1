@@ -1,10 +1,5 @@
-//
-// Created by henry on 13/09/2021.
-//
-
 #ifndef RT1_LUZ_H
 #define RT1_LUZ_H
-
 
 #include "vector.h"
 
@@ -14,12 +9,9 @@ vec3f pos, color;
 
 Luz() {}
 
-Luz(vec3f _pos, vec3f _color) : pos{_pos}, color{_color} {}
+Luz(vec3f _pos, vec3f _color);
 
-void set(vec3f _pos, vec3f _color) {
-    pos = _pos;
-    color = _color;
-}
+void set(vec3f _pos, vec3f _color);
 };
 
 

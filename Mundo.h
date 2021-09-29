@@ -1,7 +1,3 @@
-//
-// Created by henry on 8/09/2021.
-//
-
 #ifndef RT1_MUNDO_H
 #define RT1_MUNDO_H
 #include "./Camara.h"
@@ -27,7 +23,7 @@ class Mundo {
     objetos.push_back(pEsfera);
     objetos.push_back(pEsfera2);
     objetos.push_back(pEsfera3);
-    //Cilindro *pCilindro1 = new Cilindro(vec3f(-5,0,3), 0., 2., 3., vec3f(1.,0.8,0));
+
     Cilindro *pCilindro1 = new Cilindro(vec3f(-5, 0, -3),
                                         vec3f(5, 3, -3), 3,
                                         vec3f(1.0, 0.8, 0.0),
@@ -35,16 +31,17 @@ class Mundo {
     pCilindro1->es_reflexivo = true;
     objetos.push_back(pCilindro1);
 
+    /*
     Caja *pCaja = new Caja(vec3f(5, 1, 6), vec3f(0, .8, .9), vec3f(0.6, 0.3, 0.5), 5);
-    //objetos.push_back(pCaja);
+    objetos.push_back(pCaja);
+    */
 
     Plano *pPlano = new Plano(vec3f(0, -5, 0), vec3f(-1, 5, 0), vec3f(1.0, 0.8, 0.8), vec3f(0.9, 0.4, 0.3), 3);
     objetos.push_back(pPlano);
+
     cam.setObjetos(objetos);
   };
-  void run(){
-    cam.Renderizar();
-  }
+  void run();
 };
 
 

@@ -1,26 +1,36 @@
-//
-// Created by henry on 8/09/2021.
-//
-
 #include <vector>
 #include "Camara.h"
-#include "Rayo.h"
-#include "Objeto.h"
-#include "Luz.h"
+
 using namespace std;
 
-void Camara::Renderizar() {
-    /*
-    Para cada pixel de la pantalla
-        Lanzar un rayo
-        Para cada objeto de la escena
-            Calcule la intersección del rayo con ese objeto
-            Almacene la intersección más próxima
+void Camara::calcularVectores(vec3f pos, vec3f center, vec3f up) {
+    this->pos = pos;
+    ze = pos - center;
+    ze.normalize();
+    xe = up.productoCruz(ze);
+    xe.normalize();
+    ye = ze.productoCruz(xe);
+    cout << "\npos: " << pos;
+    cout << "\nxe: " << xe;
+    cout << "\nye: " << ye;
+    cout << "\nze: " << ze;
+}
 
-        Si el rayo intercepto algún objeto
-            Calcule la contribución de las luces en este punto
-            Pinte el pixel con ese color
-    */
+void Camara::inicializar(int _w, int _h, float fov, float _near) {
+    f = _near;
+    w = _w;
+    h = _h;
+    a = 2 * f * tan(fov * M_PI/360);
+    b = w / h * a;
+    cout << "\na:" << a;
+    cout << "\nb:" << b;
+}
+
+void Camara::setObjetos(vector<Objeto *> _objetos) {
+    objetos = _objetos;
+}
+
+void Camara::Renderizar() {
     Rayo ray;
     ray.ori = pos;
 
@@ -145,3 +155,5 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
     }
     return vec3f(0,0,0);
 }
+
+

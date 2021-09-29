@@ -1,7 +1,3 @@
-//
-// Created by henry on 9/09/2021.
-//
-
 #ifndef RT1_RAYO_H
 #define RT1_RAYO_H
 
@@ -13,9 +9,7 @@ public:
 
     Rayo() {}
 
-    vec3f punto_interseccion(float t) {
-        return ori + dir*t;
-    }
+    vec3f punto_interseccion(float t);
 };
 
 
