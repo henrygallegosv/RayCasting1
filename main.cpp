@@ -3,6 +3,6 @@
 
 int main() {
 	Mundo mundo;
-  mundo.run();
+    mundo.run();
 	return 0;
 }
