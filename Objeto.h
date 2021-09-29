@@ -11,12 +11,13 @@
 class Objeto {
 public:
 vec3f color;
-float kd, ks, n;
+vec3f kdkskr;
 bool es_reflexivo, es_refractivo;
-float kr, nu;
-Objeto(vec3f col):color{col}{
-    kd = ks = 0;
-    es_reflexivo = es_refractivo = false;
+float nu, n;
+Objeto(vec3f col, vec3f _kdkskr, float _n) : n{_n},color{col}, kdkskr{_kdkskr}
+{
+  //kd = ks = 0;
+  es_reflexivo = es_refractivo = false;
 }
 
 //virtual bool intersectar(Rayo ray, int &t, vec3f &c)=0;
@@ -28,7 +29,7 @@ public:
     vec3f centro;
     float radio;
 
-    Esfera(vec3f cen, float r, vec3f col): centro{cen}, radio{r}, Objeto(col) {}
+    Esfera(vec3f cen, float r, vec3f col, vec3f _kdkskr, float _n) : centro{cen}, radio{r}, Objeto(col, _kdkskr,_n) {}
     bool intersectar(Rayo ray, float &t, vec3f &col, vec3f &normal) {
         auto _a = ray.dir.productoPunto(ray.dir);
         auto _b = 2*ray.dir.productoPunto(ray.ori-centro);
@@ -52,7 +53,7 @@ public:
 class Caja : public Objeto {
 public:
     vec3f rad;
-    Caja(vec3f _rad, vec3f col): rad{_rad}, Objeto(col) {}
+    Caja(vec3f _rad, vec3f col, vec3f _kdkskr, float _n) : rad{_rad}, Objeto(col, _kdkskr,_n) {}
 
     bool intersectar(Rayo ray, float &t, vec3f &c, vec3f &normal)
     //vec4 iBox( in vec3 ro, in vec3 rd, in mat4 txx, in mat4 txi, in vec3 rad )
@@ -96,8 +97,7 @@ public:
 
    // Cilindro(vec3f cen, float y_min, float y_max, float rad, vec3f _color):
     //centro{cen}, yMin{y_min}, yMax{y_max}, radio{rad}, Objeto(_color) {}
-    Cilindro(vec3f _pa, vec3f _pb, float _radio, vec3f _color):
-    pa{_pa}, pb{_pb}, ra{_radio}, Objeto{_color} {}
+    Cilindro(vec3f _pa, vec3f _pb, float _radio, vec3f _color, vec3f _kdkskr, float _n) : pa{_pa}, pb{_pb}, ra{_radio}, Objeto{_color, _kdkskr, _n} {}
 
     /*
     bool intersectar1(Rayo ray, float &t, vec3f &col, vec3f &normal) {
@@ -176,9 +176,9 @@ class Plano : public Objeto {
 public:
     vec3f punto, normal;
 
-    Plano(vec3f _punto, vec3f _normal, vec3f _color) :
-    punto{_punto}, normal{_normal}, Objeto(_color){
-        normal.normalize();
+    Plano(vec3f _punto, vec3f _normal, vec3f _color, vec3f _kdkskr, float _n) : punto{_punto}, normal{_normal}, Objeto(_color, _kdkskr,_n)
+    {
+      normal.normalize();
     }
 
     bool intersectar(Rayo ray, float &t, vec3f &c, vec3f &_normal) {

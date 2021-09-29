@@ -11,7 +11,7 @@
 #include "Rayo.h"
 #include "Objeto.h"
 #include "Luz.h"
-
+#include <vector>
 using namespace std;
 using namespace cimg_library;
 typedef unsigned char BYTE;
@@ -50,10 +50,12 @@ public:
         cout << "\na:" << a;
         cout << "\nb:" << b;
     }
-
+    void setObjetos(vector<Objeto*> _objetos){
+      objetos = _objetos;
+    }
     void Renderizar();
 
-    vec3f CalcularRayosSecundarios(Rayo rayo, int depth);
+    vec3f CalcularRayo(Rayo rayo, int depth,int max_depth);
 };
 
 

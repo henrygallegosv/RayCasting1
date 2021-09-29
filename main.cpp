@@ -2,6 +2,7 @@
 #include "Mundo.h"
 
 int main() {
-	Mundo mundo();
+	Mundo mundo;
+  mundo.run();
 	return 0;
 }
