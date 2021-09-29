@@ -1,5 +1,7 @@
 #include "Esfera.h"
 
+Esfera::Esfera(vec3f cen, float r, vec3f col, vec3f _kdkskr, float _n) : centro{cen}, radio{r}, Objeto(col, _kdkskr,_n) {}
+
 bool Esfera::intersectar(Rayo ray, float &t, vec3f &col, vec3f &normal) {
     auto _a = ray.dir.productoPunto(ray.dir);
     auto _b = 2*ray.dir.productoPunto(ray.ori-centro);
@@ -18,3 +20,5 @@ bool Esfera::intersectar(Rayo ray, float &t, vec3f &col, vec3f &normal) {
     return true;
 
 }
+
+

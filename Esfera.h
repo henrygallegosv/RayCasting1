@@ -6,7 +6,7 @@ public:
     vec3f centro;
     float radio;
 
-    Esfera(vec3f cen, float r, vec3f col, vec3f _kdkskr, float _n) : centro{cen}, radio{r}, Objeto(col, _kdkskr,_n) {}
+    Esfera(vec3f cen, float r, vec3f col, vec3f _kdkskr, float _n);
     bool intersectar(Rayo ray, float &t, vec3f &col, vec3f &normal) override;
 };
 
