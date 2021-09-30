@@ -1,5 +1,6 @@
 #include <vector>
 #include "Camara.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -138,6 +139,9 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
 
         // Lanzar los rayos secundarios
         // Reflexivo
+        if(pObj->es_refractivo)
+          CalcularRefraccion(L,normal_min,pObj->n,pObj->kdkskr.z);
+
         vec3f color_reflexivo;
         if (pObj->es_reflexivo && depth < DEPTH_MAX) {
             Rayo rayo_reflexivo;
@@ -156,4 +160,26 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
     return vec3f(0,0,0);
 }
 
-
+vec3f Camara::CalcularRefraccion(vec3f &L, vec3f &normal, float n, float &kr){
+  float cosi = clip(-1, 1, L.productoPunto(normal));
+  float etai = 1, etat = n;
+  if (cosi > 0)
+  {
+    std::swap(etai, etat);
+  }
+  // Compute sini using Snell's law
+  float sint = etai / etat * sqrtf(std::max(0.f, 1 - cosi * cosi));
+  // Total internal reflection
+  if (sint >= 1)
+  {
+    kr = 1;
+  }
+  else
+  {
+    float cost = sqrtf(std::max(0.f, 1 - sint * sint));
+    cosi = fabsf(cosi);
+    float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+    float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+    kr = (Rs * Rs + Rp * Rp) / 2;
+  }
+}

@@ -16,7 +16,7 @@ class Mundo {
 
     vector<Objeto*> objetos;
 
-    auto *pCilindro1 = new Cilindro(vec3f(0, 5, 0),
+    /*auto *pCilindro1 = new Cilindro(vec3f(0, 5, 0),
                                           vec3f(0, 0, 0),
                                           2.5,
                                           vec3f(255, 233, 0),
@@ -43,7 +43,7 @@ class Mundo {
 
     Objeto *pEsfera11 = new Esfera(vec3f(-1.2, 5, 1.2), 0.1, vec3f(250, 191, 0), vec3f(0.9, 0.5, 0.2), 4);pEsfera11->es_reflexivo = true;objetos.push_back(pEsfera11);
     Objeto *pEsfera12 = new Esfera(vec3f(-1.3, 5.1, 1.3), 0.1, vec3f(0, 0, 0), vec3f(1, 0.6, 0.3), 3);pEsfera12->es_reflexivo = true;objetos.push_back(pEsfera12);
-
+    */
 /*
     Caja *pCaja = new Caja(
             vec3f(6.1, 2, 6.1),
@@ -60,7 +60,7 @@ class Mundo {
     objetos.push_back(pPlano);
 
 
-    /*
+
     ////Matrix de ESFERAS
 
     for(int kd=0;kd<10;kd++){
@@ -70,10 +70,11 @@ class Mundo {
                                              vec3f(1,0,0.25),
                                              vec3f(kd*0.1,ks*0.1,0),
                                              4);
+            pEspefera14->es_reflexivo = pEspefera14->es_refractivo = true;
             objetos.push_back(pEspefera14);
         }
     }
-    */
+
 
     cam.setObjetos(objetos);
   };

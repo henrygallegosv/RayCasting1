@@ -31,6 +31,11 @@ public:
     void setObjetos(vector<Objeto*> _objetos);
     void Renderizar();
     vec3f CalcularRayo(Rayo rayo, int depth,int max_depth);
+    vec3f CalcularRefraccion(vec3f &L,vec3f &normal,float n,float &kr);
+    float clip(float n, float lower, float upper)
+    {
+      return std::max(lower, std::min(n, upper));
+    }
 };
 
 
