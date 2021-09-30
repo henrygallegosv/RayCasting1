@@ -8,10 +8,12 @@ class Objeto {
 public:
     vec3f color;
     vec3f kdkskr;
+    float kt;  // refraccion o transmission
     bool es_reflexivo, es_refractivo;
-    float nu, n;
+    float eta, n;
 
     Objeto(vec3f col, vec3f _kdkskr, float _n);
+
 
     virtual bool intersectar(Rayo ray, float &t, vec3f &c, vec3f &normal)=0;
 };

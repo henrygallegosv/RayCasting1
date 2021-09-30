@@ -139,20 +139,35 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
 
         // Lanzar los rayos secundarios
         // Reflexivo
-        if(pObj->es_refractivo)
-          CalcularRefraccion(L,normal_min,pObj->n,pObj->kdkskr.z);
+        vec3f color_refractivo;
+        float kr = pObj->kdkskr.z, kt=0;
+        if(pObj->es_refractivo) {
+            vec3f dirRefr = CalcularRefraccion(rayo.dir, normal_min, 1.5, kr);
+            dirRefr.normalize();
+            kt = 1 - kr;
+            if (kt > 0) {
+                Rayo rayo_refractivo;
+                rayo_refractivo.dir = dirRefr;
+                rayo_refractivo.ori = pi + dirRefr*0.0001;
+                color_refractivo = CalcularRayo(rayo_refractivo, depth+1, max_depth);
+                color_refractivo = color_refractivo * kt;
+            }
+            if (kr > 0) {
+                normal_min = -normal_min;
+            }
+        }
 
         vec3f color_reflexivo;
         if (pObj->es_reflexivo && depth < DEPTH_MAX) {
             Rayo rayo_reflexivo;
-            rayo_reflexivo.ori = pi + L*0.0001;
             vec3f vec_rayo = -rayo.dir;
             rayo_reflexivo.dir = normal_min * 2. * (vec_rayo.productoPunto(normal_min)) - vec_rayo;
+            rayo_reflexivo.ori = pi + rayo_reflexivo.dir*0.0001;
             color_reflexivo = CalcularRayo(rayo_reflexivo, depth + 1,max_depth);
-
-            color_min = color_min + color_reflexivo * pObj->kdkskr.z;
-            color_min.max_to_one();
+            color_reflexivo = color_reflexivo * kr;
         }
+        color_min = color_min + color_reflexivo + color_refractivo;
+        color_min.max_to_one();
 
 
         return color_min;
@@ -160,26 +175,28 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
     return vec3f(0,0,0);
 }
 
-vec3f Camara::CalcularRefraccion(vec3f &L, vec3f &normal, float n, float &kr){
-  float cosi = clip(-1, 1, L.productoPunto(normal));
+vec3f Camara::CalcularRefraccion(vec3f &I, vec3f &normal, float n, float &kr){
+  vec3f T;
+  float cosi = clip(-1, 1, I.productoPunto(normal));
   float etai = 1, etat = n;
-  if (cosi > 0)
-  {
+  if (cosi > 0) {
     std::swap(etai, etat);
   }
   // Compute sini using Snell's law
   float sint = etai / etat * sqrtf(std::max(0.f, 1 - cosi * cosi));
   // Total internal reflection
-  if (sint >= 1)
-  {
+  if (sint >= 1) {
     kr = 1;
   }
-  else
-  {
+  else {
     float cost = sqrtf(std::max(0.f, 1 - sint * sint));
     cosi = fabsf(cosi);
     float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
     float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
     kr = (Rs * Rs + Rp * Rp) / 2;
+    //float c1 = normal.productoPunto(I);
+    // float c2 = sqrt(1-pow(etai/etat, 2) *(1-c1*c1));
+    T = I*etai + normal * (etai * cosi - cost);
   }
+  return T;
 }

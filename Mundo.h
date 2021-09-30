@@ -55,22 +55,23 @@ class Mundo {
 */
     Plano *pPlano = new Plano(vec3f(0, 0, 0),
                               vec3f(-1, 5, 0),
-                              vec3f(0.6, 0.6, 0.6),
-                              vec3f(0.9, 0.4, 0.3), 3);
+                              vec3f(0.6, 0.6, 1),
+                              vec3f(0.9, 0.4, 0), 3);
     objetos.push_back(pPlano);
 
 
 
     ////Matrix de ESFERAS
 
-    for(int kd=0;kd<10;kd++){
-        for(int ks=0;ks<10;ks++){
-            Objeto *pEspefera14 = new Esfera(vec3f(-20+kd*3,0,-20+ks*2),
-                                             1.5,
+    for(int kd=0;kd<4;kd++){
+        for(int ks=0;ks<4;ks++){
+            Objeto *pEspefera14 = new Esfera(vec3f(-10+kd*10,0,-10+ks*10),
+                                             4,
                                              vec3f(1,0,0.25),
-                                             vec3f(kd*0.1,ks*0.1,0),
+                                             vec3f(kd*0.1,ks*0.1,0.1),
                                              4);
-            pEspefera14->es_reflexivo = pEspefera14->es_refractivo = true;
+            pEspefera14->es_reflexivo = true;
+            pEspefera14->es_refractivo = true;
             objetos.push_back(pEspefera14);
         }
     }
