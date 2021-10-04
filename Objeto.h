@@ -8,7 +8,7 @@ class Objeto {
 public:
     vec3f color;
     vec3f kdkskr;
-    float kt;  // refraccion o transmission
+    //float kt;  // refraccion o transmission
     bool es_reflexivo, es_refractivo;
     float eta, n;
 
