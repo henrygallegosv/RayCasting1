@@ -40,7 +40,7 @@ void Camara::Renderizar() {
 
     vec3f color_min;
 
-    luz.set(vec3f(-10, 10, 0), vec3f(1,1,1));
+    luz.set(vec3f(-10, 10, 20), vec3f(1,1,1));
 
     bool intersecto, intersecto_uno;
     Objeto *pObj;

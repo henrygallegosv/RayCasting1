@@ -63,20 +63,30 @@ class Mundo {
 
     ////Matrix de ESFERAS
 
-    for(int kd=0;kd<1;kd++){
+    /*for(int kd=0;kd<1;kd++){
         for(int ks=0;ks<1;ks++){
             Objeto *pEspefera14 = new Esfera(vec3f(-10+kd*10,4,-10+ks*10),
                                              4,
                                              vec3f(1,0,0.25),
-                                             vec3f(kd*0.1,ks*0.1,0.2),
+                                             vec3f(kd*0.5,ks*0.5,0.8),
                                              4);
             pEspefera14->es_reflexivo = true;
-            pEspefera14->es_refractivo = true;
+            pEspefera14->es_refractivo = false;
             objetos.push_back(pEspefera14);
         }
-    }
+    }**/
 
-    Triangulo *pTri1 = new Triangulo(vec3f(10,0,0), vec3f(11,0,8), vec3f(14,7,4), vec3f(0,0,1),
+    Objeto *pEsfera = new Esfera(vec3f(0, 5, 0), 4, vec3f(1, 0, 0),
+                                 vec3f(0.9, 0.5, 0.2), 4);
+    pEsfera->es_reflexivo = true;
+    objetos.push_back(pEsfera);
+    Objeto *pEsfera12 = new Esfera(vec3f(0, 5, 10), 4, vec3f(0, 1, 0),
+                                   vec3f(1, 0.6, 0.3), 3);
+    pEsfera12->es_reflexivo = true;
+    pEsfera12->es_refractivo = true;
+    objetos.push_back(pEsfera12);
+
+    Triangulo *pTri1 = new Triangulo(vec3f(5,0,0), vec3f(7,0,8), vec3f(10,7,4), vec3f(0,0,1),
                                      vec3f(0.5,0.5,0), 3);
     objetos.push_back(pTri1);
 

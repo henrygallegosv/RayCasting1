@@ -11,7 +11,7 @@ template <typename T> int sgn(T val) {
 class vec3f {
 public:
     float x, y, z;
-    vec3f() {}
+    vec3f() {x=0, y=0, z=0;}
 
     vec3f(float _x, float _y, float _z):x{_x}, y{_y}, z{_z}{}
 
