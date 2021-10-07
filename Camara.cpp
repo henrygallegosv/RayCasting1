@@ -42,6 +42,14 @@ void Camara::Renderizar() {
 
     luz.set(vec3f(-10, 10, 20), vec3f(1,1,1));
 
+    Luz *pLuz1 = new Luz;
+    pLuz1->set(vec3f(-10, 10, 20), vec3f(1,1,1));
+    Luz *pLuz2 = new Luz;
+    pLuz2->set(vec3f(10, 10, 20), vec3f(1,1,1));
+
+    luces.push_back(pLuz2);
+    luces.push_back(pLuz1);
+
     bool intersecto, intersecto_uno;
     Objeto *pObj;
     for(int x=0;  x < w; x++) {
@@ -73,7 +81,7 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
     vec3f normal, normal_min;
     float ks_min, n_min, kd_min = 0;
     bool intersecto, intersecto_uno = false;
-    Objeto *pObj;
+    Objeto *pObj, *pObjSombra;
     for (auto &obj : objetos) {
         intersecto = obj->intersectar(rayo, t, color, normal);
 
@@ -90,86 +98,97 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
         }
     }
     if (intersecto_uno) {
-        vec3f luz_ambiente = luz.color * 0.1;
-        //color_min.normalize();
+        vec3f color_res;
 
-        // normal vec_luz
-        vec3f pi = rayo.punto_interseccion(t_min);
-        vec3f L = luz.pos - pi;
-        L.normalize();
+        for (auto &pLuz : luces) {
+            vec3f color_luz;
+            vec3f luz_ambiente = luz.color * 0.1;
 
-        Rayo rayo_sombra;
-        rayo_sombra.ori = pi + L*0.0001;
-        rayo_sombra.dir = L;
+            // normal vec_luz
+            vec3f pi = rayo.punto_interseccion(t_min);
+            vec3f L = pLuz->pos - pi;
+            L.normalize();
 
-        float factor_sombra = 1;
-        for (auto &obj : objetos) {
-            intersecto = obj->intersectar(rayo_sombra, t, color, normal);
-            if (intersecto) {
-                factor_sombra = 0;
-                break;
+            Rayo rayo_sombra;
+            rayo_sombra.ori = pi + L*0.0001;
+            rayo_sombra.dir = L;
+
+            float factor_sombra = 1;
+            for (auto &obj : objetos) {
+                intersecto = obj->intersectar(rayo_sombra, t, color, normal);
+                if (intersecto) {
+                    factor_sombra = 0;
+                    break;
+                }
             }
+            if (factor_sombra) {
+                float factor_difuso = normal_min.productoPunto(L);
+                vec3f luz_difusa(0, 0, 0);
+                if (factor_difuso > 0) {
+                    luz_difusa = pLuz->color * kd_min * factor_difuso;
+                }
+
+                // luz especular
+                vec3f dir = rayo.dir;
+                vec3f V(-dir.x, -dir.y, -dir.z); // vector hacia el observador
+                vec3f r = normal_min * 2. * (L.productoPunto(normal_min)) - L;
+                r.normalize();
+
+                float factor_especular = r.productoPunto(V);
+                vec3f luz_especular(0, 0, 0);
+                if (factor_especular > 0.0) {
+                    factor_especular = pow(factor_especular, n_min);
+                    luz_especular = pLuz->color * ks_min * factor_especular;
+                }
+
+                color_luz = luz_ambiente + luz_difusa + luz_especular;
+                color_luz.max_to_one();
+            } else {
+                vec3f color_sombra = CalcularRayo(rayo_sombra, depth + 1, max_depth);
+                color_luz = luz_ambiente + color_sombra;
+
+                color_luz.max_to_one();
+            }
+
+            // Lanzar los rayos secundarios
+            // Reflexivo
+            vec3f color_refractivo;
+            float kr = pObj->kdkskr.z, kt=0;
+            if(pObj->es_refractivo) {
+                vec3f dirRefr = CalcularRefraccion(rayo.dir, normal_min, 1.5, kr);
+                dirRefr.normalize();
+                kt = 1 - kr;
+                if (kt > 0) {
+                    Rayo rayo_refractivo;
+                    rayo_refractivo.dir = dirRefr;
+                    rayo_refractivo.ori = pi + dirRefr*0.0001;
+                    color_refractivo = CalcularRayo(rayo_refractivo, depth+1, max_depth);
+                    color_refractivo = color_refractivo * kt;
+                }
+                if (kr > 0) {
+                    normal_min = -normal_min;
+                }
+            }
+
+            vec3f color_reflexivo;
+            if (pObj->es_reflexivo && depth < DEPTH_MAX) {
+                Rayo rayo_reflexivo;
+                vec3f vec_rayo = -rayo.dir;
+                rayo_reflexivo.dir = normal_min * 2. * (vec_rayo.productoPunto(normal_min)) - vec_rayo;
+                rayo_reflexivo.ori = pi + rayo_reflexivo.dir*0.0001;
+                color_reflexivo = CalcularRayo(rayo_reflexivo, depth + 1,max_depth);
+                color_reflexivo = color_reflexivo * kr;
+            }
+            color_luz = color_luz + color_reflexivo + color_refractivo;
+            //color_luz.max_to_one();
+
+            color_res = color_res + color_luz;
         }
-        if (factor_sombra) {
-            float factor_difuso = normal_min.productoPunto(L);
-            vec3f luz_difusa(0, 0, 0);
-            if (factor_difuso > 0) {
-                luz_difusa = luz.color * kd_min * factor_difuso;
-            }
+        //color_res.max_to_one();
+        color_res = color_res / luces.size();
 
-            // luz especular
-            vec3f dir = rayo.dir;
-            vec3f V(-dir.x, -dir.y, -dir.z); // vector hacia el observador
-            vec3f r = normal_min * 2. * (L.productoPunto(normal_min)) - L;
-            r.normalize();
-
-            float factor_especular = r.productoPunto(V);
-            vec3f luz_especular(0, 0, 0);
-            if (factor_especular > 0.0) {
-                factor_especular = pow(factor_especular, n_min);
-                luz_especular = luz.color * ks_min * factor_especular;
-            }
-
-            color_min *= (luz_ambiente + luz_difusa + luz_especular);
-            color_min.max_to_one();
-        } else {
-            color_min *= luz_ambiente;
-            color_min.max_to_one();
-        }
-
-        // Lanzar los rayos secundarios
-        // Reflexivo
-        vec3f color_refractivo;
-        float kr = pObj->kdkskr.z, kt=0;
-        if(pObj->es_refractivo) {
-            vec3f dirRefr = CalcularRefraccion(rayo.dir, normal_min, 1.5, kr);
-            dirRefr.normalize();
-            kt = 1 - kr;
-            if (kt > 0) {
-                Rayo rayo_refractivo;
-                rayo_refractivo.dir = dirRefr;
-                rayo_refractivo.ori = pi + dirRefr*0.0001;
-                color_refractivo = CalcularRayo(rayo_refractivo, depth+1, max_depth);
-                color_refractivo = color_refractivo * kt;
-            }
-            if (kr > 0) {
-                normal_min = -normal_min;
-            }
-        }
-
-        vec3f color_reflexivo;
-        if (pObj->es_reflexivo && depth < DEPTH_MAX) {
-            Rayo rayo_reflexivo;
-            vec3f vec_rayo = -rayo.dir;
-            rayo_reflexivo.dir = normal_min * 2. * (vec_rayo.productoPunto(normal_min)) - vec_rayo;
-            rayo_reflexivo.ori = pi + rayo_reflexivo.dir*0.0001;
-            color_reflexivo = CalcularRayo(rayo_reflexivo, depth + 1,max_depth);
-            color_reflexivo = color_reflexivo * kr;
-        }
-        color_min = color_min + color_reflexivo + color_refractivo;
+        color_min *= color_res;
         color_min.max_to_one();
-
-
         return color_min;
     }
     return vec3f(0,0,0);

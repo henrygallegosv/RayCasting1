@@ -80,7 +80,7 @@ class Mundo {
                                  vec3f(0.9, 0.5, 0.2), 4);
     pEsfera->es_reflexivo = true;
     objetos.push_back(pEsfera);
-    Objeto *pEsfera12 = new Esfera(vec3f(0, 5, 10), 4, vec3f(0, 1, 0),
+    Objeto *pEsfera12 = new Esfera(vec3f(-2, 5, 10), 4, vec3f(0, 1, 0),
                                    vec3f(1, 0.6, 0.3), 3);
     pEsfera12->es_reflexivo = true;
     pEsfera12->es_refractivo = true;

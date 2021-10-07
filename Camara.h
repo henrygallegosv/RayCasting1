@@ -21,6 +21,7 @@ class Camara {
 
     CImg<BYTE> *pImg;
     vector<Objeto*> objetos;
+    vector<Luz*> luces;
     Luz luz;
 
 public:
