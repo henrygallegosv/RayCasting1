@@ -43,9 +43,9 @@ void Camara::Renderizar() {
     luz.set(vec3f(-10, 10, 20), vec3f(1,1,1));
 
     Luz *pLuz1 = new Luz;
-    pLuz1->set(vec3f(-10, 10, 20), vec3f(1,1,1));
+    pLuz1->set(vec3f(-10, 10, 10), vec3f(1,1,1));
     Luz *pLuz2 = new Luz;
-    pLuz2->set(vec3f(10, 10, 20), vec3f(1,1,1));
+    pLuz2->set(vec3f(20, 10, 10), vec3f(1,1,1));
 
     luces.push_back(pLuz2);
     luces.push_back(pLuz1);
@@ -68,6 +68,7 @@ void Camara::Renderizar() {
     }
     dis_img.render((*pImg));
     dis_img.paint();
+
     while (!dis_img.is_closed()) {
         dis_img.wait();
     }
@@ -144,8 +145,9 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
                 color_luz = luz_ambiente + luz_difusa + luz_especular;
                 color_luz.max_to_one();
             } else {
-                vec3f color_sombra = CalcularRayo(rayo_sombra, depth + 1, max_depth);
-                color_luz = luz_ambiente + color_sombra;
+                //vec3f color_sombra = CalcularRayo(rayo_sombra, depth + 1, max_depth);
+                //color_luz = luz_ambiente + color_sombra;
+                color_luz = luz_ambiente;
 
                 color_luz.max_to_one();
             }
