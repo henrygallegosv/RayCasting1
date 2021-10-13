@@ -11,6 +11,7 @@ public:
     //float kt;  // refraccion o transmission
     bool es_reflexivo, es_refractivo;
     float eta, n;
+    bool esFuenteLuz;
 
     Objeto(vec3f col, vec3f _kdkskr, float _n);
 

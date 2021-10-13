@@ -14,6 +14,7 @@ class Mundo {
 
   void escenario1();
   void escenario2();
+  void escenario3();
 };
 
 

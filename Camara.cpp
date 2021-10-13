@@ -47,13 +47,19 @@ void Camara::Renderizar() {
     Luz *pLuz2 = new Luz;
     pLuz2->set(vec3f(20, 10, 10), vec3f(1,1,1));
 
-    luces.push_back(pLuz2);
+    vec3f color1(1, .9, 0), pos1(0,4,0);
+    Luz *pLuzEsfera1 = new Luz;
+    pLuzEsfera1->set(pos1, color1);
+
+    //luces.push_back(pLuz2);
     luces.push_back(pLuz1);
+    luces.push_back(pLuzEsfera1);
 
     bool intersecto, intersecto_uno;
     Objeto *pObj;
     for(int x=0;  x < w; x++) {
         for(int y=0; y < h; y++) {
+            cout << "(" << x << "," << y << ") ";
             ray.dir = ze*(-f) + ye*a*(y/h-1/2.) + xe*b*(x/w -1/2.);
             ray.dir.normalize();
             vec3f color_min = CalcularRayo(ray,1,5);
@@ -61,10 +67,9 @@ void Camara::Renderizar() {
             (*pImg)(x,h-1-y,0) = (BYTE)(color_min.x * 255);
             (*pImg)(x,h-1-y,1) = (BYTE)(color_min.y * 255);
             (*pImg)(x,h-1-y,2) = (BYTE)(color_min.z * 255);
-            //dis_img.render((*pImg));
-            //dis_img.paint();
-
         }
+        dis_img.render((*pImg));
+        dis_img.paint();
     }
     dis_img.render((*pImg));
     dis_img.paint();
@@ -74,6 +79,29 @@ void Camara::Renderizar() {
     }
 
 }
+bool Camara::CalcularInterseccion(Rayo rayo, ColorInfo &colorinfo) {
+    float t, t_min=100000;
+    vec3f color;
+    vec3f normal;
+    bool intersecto, intersecto_uno = false;
+    for (auto &obj : objetos) {
+        intersecto = obj->intersectar(rayo, t, color, normal);
+
+        if (intersecto && t < t_min) {
+            intersecto_uno = true;
+
+            t_min = t;
+            colorinfo.color = color;
+            colorinfo.normal = normal;
+            //kd_min = obj->kdkskr.x;
+            //ks_min = obj->kdkskr.y;
+            //n_min = obj->n;
+            colorinfo.pObj = obj;
+        }
+    }
+    return intersecto_uno;
+}
+
 
 vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
     if(depth > max_depth) return vec3f(0,0,0);
@@ -98,7 +126,20 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
             pObj = obj;
         }
     }
+    //ColorInfo colorinfo;
+    //intersecto_uno = CalcularInterseccion(rayo, colorinfo);
+    //pObj   = colorinfo.pObj;
+    if (intersecto_uno && pObj->esFuenteLuz) {
+        return color_min;
+    }
+
     if (intersecto_uno) {
+        /*color_min = colorinfo.color;
+        normal_min = colorinfo.normal;
+        kd_min = colorinfo.pObj->kdkskr.x;
+        ks_min = colorinfo.pObj->kdkskr.y;
+        n_min  = colorinfo.pObj->n;*/
+
         vec3f color_res;
 
         for (auto &pLuz : luces) {
@@ -114,15 +155,25 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
             rayo_sombra.ori = pi + L*0.0001;
             rayo_sombra.dir = L;
 
-            float factor_sombra = 1;
+            float en_sombra = false;
             for (auto &obj : objetos) {
                 intersecto = obj->intersectar(rayo_sombra, t, color, normal);
                 if (intersecto) {
-                    factor_sombra = 0;
+                    en_sombra = true;
                     break;
                 }
             }
-            if (factor_sombra) {
+            /*ColorInfo colorinfo_sombra;
+            intersecto_uno = CalcularInterseccion(rayo_sombra, colorinfo_sombra);
+            pObjSombra   = colorinfo_sombra.pObj;
+            if (intersecto_uno && pObjSombra->esFuenteLuz) {
+                color_luz = luz_ambiente + colorinfo_sombra.color;
+            }*/
+            /*else if (intersecto_uno && pObjSombra->es_refractivo) {
+                vec3f color_sombra = CalcularRayo(rayo_sombra, depth + 1, max_depth);
+                color_luz = luz_ambiente + color_sombra;
+            }*/
+            if ( !en_sombra ) {
                 float factor_difuso = normal_min.productoPunto(L);
                 vec3f luz_difusa(0, 0, 0);
                 if (factor_difuso > 0) {
@@ -143,14 +194,10 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
                 }
 
                 color_luz = luz_ambiente + luz_difusa + luz_especular;
-                color_luz.max_to_one();
             } else {
-                //vec3f color_sombra = CalcularRayo(rayo_sombra, depth + 1, max_depth);
-                //color_luz = luz_ambiente + color_sombra;
                 color_luz = luz_ambiente;
-
-                color_luz.max_to_one();
             }
+            color_luz.max_to_one();
 
             // Lanzar los rayos secundarios
             // Reflexivo
@@ -184,10 +231,28 @@ vec3f Camara::CalcularRayo(Rayo rayo, int depth,int max_depth){
             color_luz = color_luz + color_reflexivo + color_refractivo;
             //color_luz.max_to_one();
 
-            color_res = color_res + color_luz;
+            // path tracing
+            // lanzar rayos
+            // acumular el color
+            vec3f color_path_tracing, color_res_pt;
+            Rayo rayo_pt;
+            for (int i=0; i<5; i++) {
+                vec3f ndir(normal_min.x + (rand()%100/100),
+                           normal_min.y + (rand()%100/100),
+                           normal_min.z + (rand()%100/100));
+                ndir.normalize();
+                rayo_pt.dir = ndir;
+                rayo_pt.ori = pi + ndir*0.0001;
+                color_res_pt = CalcularRayo(rayo_pt, depth + 1,max_depth);
+
+                color_path_tracing = color_path_tracing + color_res_pt;
+            }
+            color_path_tracing.max_to_one();
+
+            color_res = color_res + color_luz + color_path_tracing;
         }
-        //color_res.max_to_one();
-        color_res = color_res / luces.size();
+        color_res.max_to_one();
+        //color_res = color_res / luces.size();
 
         color_min *= color_res;
         color_min.max_to_one();

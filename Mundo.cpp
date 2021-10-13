@@ -7,7 +7,7 @@ void Mundo::run() {
 void Mundo::escenario1() {
     std::cout<<"dentro de mundo";
     cam.calcularVectores(vec3f(5, 10, 30), vec3f(0, 0, 0), vec3f(0, 1, 0));
-    cam.inicializar(800, 600, 45, 10);
+    cam.inicializar(400, 200, 45, 10);
 
     vector<Objeto*> objetos;
 
@@ -61,7 +61,7 @@ void Mundo::escenario1() {
     Objeto *pEsfera12 = new Esfera(vec3f(-2, 5, 10), 4, vec3f(0, 1, 0),
                                    vec3f(1, 0.6, 0.3), 3);
     pEsfera12->es_reflexivo = true;
-    pEsfera12->es_refractivo = true;
+    pEsfera12->es_refractivo = false;
     objetos.push_back(pEsfera12);
 
     Triangulo *pTri1 = new Triangulo(vec3f(5,0,0), vec3f(7,0,8), vec3f(10,7,4), vec3f(0,0,1),
@@ -97,5 +97,38 @@ void Mundo::escenario2() {
             objetos.push_back(pEspefera14);
         }
     }
+    cam.setObjetos(objetos);
+}
+
+void Mundo::escenario3() {
+    vec3f color1(1, .9, 0), pos1(0,3,0);
+
+    cam.calcularVectores(vec3f(5, 20, 50), vec3f(0, 0, 0), vec3f(0, 1, 0));
+    cam.inicializar(800, 600, 45, 10);
+    vector<Objeto*> objetos;
+    auto *pCilindro1 = new Cilindro(vec3f(0, 15, 0),
+                                    vec3f(0, 0, 0),
+                                    8,
+                                    vec3f(1, 1, 0.5),
+                                    vec3f(0.4, 0.5, 0.8),
+                                    1);
+
+    pCilindro1->es_reflexivo = true;
+    pCilindro1->es_refractivo = true;
+    objetos.push_back(pCilindro1);
+
+    Objeto *pEsfera = new Esfera(pos1, 1, color1, vec3f(0.9, 0.5, 0.2), 4);
+    pEsfera->es_reflexivo = false;
+    pEsfera->esFuenteLuz = true;
+    pEsfera->es_refractivo = false;
+    objetos.push_back(pEsfera);
+
+
+    Plano *pPlano = new Plano(vec3f(0, 0, 0),
+                              vec3f(0, 1, 0),
+                              vec3f(0.6, 0.6, 1),
+                              vec3f(0.9, 0.4, 0), 3);
+    objetos.push_back(pPlano);
+
     cam.setObjetos(objetos);
 }

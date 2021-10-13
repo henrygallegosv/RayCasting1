@@ -14,6 +14,12 @@ typedef unsigned char BYTE;
 
 const int DEPTH_MAX = 5;
 
+struct ColorInfo {
+    float t;
+    vec3f color, normal;
+    Objeto *pObj;
+};
+
 class Camara {
     vec3f pos, xe, ye, ze;
     float w, h;
@@ -33,10 +39,10 @@ public:
     void Renderizar();
     vec3f CalcularRayo(Rayo rayo, int depth,int max_depth);
     vec3f CalcularRefraccion(vec3f &L,vec3f &normal,float n,float &kr);
-    float clip(float n, float lower, float upper)
-    {
+    float clip(float n, float lower, float upper) {
       return std::max(lower, std::min(n, upper));
     }
+    bool CalcularInterseccion(Rayo rayo, ColorInfo &colorinfo);
 };
 
 
